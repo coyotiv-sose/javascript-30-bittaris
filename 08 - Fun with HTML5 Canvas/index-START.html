@@ -1,20 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>HTML5 Canvas</title>
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+<body>
+  <canvas id="draw" width="800" height="800"></canvas>
+  <script>
+    const canvas = document.querySelector('#draw')
+    const ctx = canvas.getContext('2d') // This is where you actually draw. It can be on 2d, or 3d (game design)
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    ctx.strokeStyle = '#BADA55'
+    ctx.lineJoin = 'round' // there are several options both for lineJoin and LineCap.
+    ctx.lineCap = 'round'
+    ctx.lineWidth = 100
+    ctx.globalCompositeOperation = 'multiply'
+
+    let isDrawing = false // So that when your mouse is hovering over the screen it isn't drawing. But when true, (mouse click and hover) it will be drawing.
+    let lastX = 0
+    let lastY = 0
+    let hue = 0
+    let direction = true
+
+    function draw(e) {
+      if (!isDrawing) return // stop the function from running when they are not moused down
+      console.log(e)
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+      ctx.beginPath()
+      ctx.moveTo(lastX, lastY) // start from
+      ctx.lineTo(e.offsetX, e.offsetY) // go to wherever the users mouse is going to
+      ctx.stroke()
+      lastX = e.offsetX
+      lastY = e.offsetY // destructuring the array didn't work for me
+
+      hue++
+      if (hue >= 360) {
+        hue = 0
+      }
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+        direction = !direction
+      }
+      if (direction) {
+        ctx.lineWidth++
+      } else {
+        ctx.lineWidth--
+      }
+
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true
+      lastX = e.offsetX
+      lastY = e.offsetY // this updates the lastX and lastY so that the drawing doesn't begin always from position x0,y0
+    })
+
+
+    canvas.addEventListener('mousemove', draw)
+    canvas.addEventListener('mouseup', () => isDrawing = false)
+    canvas.addEventListener('mouseout', () => isDrawing = false)
+
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
 
 </body>
+
 </html>
